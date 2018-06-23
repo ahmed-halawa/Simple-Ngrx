@@ -1,0 +1,80 @@
+<div
+    class="example-container mat-elevation-z8"
+    #content
+>
+    <div
+        class="example-loading-shade"
+        *ngIf="(usersLoading$ | async) || (usersErr$ | async)"
+    >
+        <div
+            class="spinner"
+            *ngIf="usersLoading$ | async"
+        ></div>
+        <div
+            class="example-rate-limit-reached"
+            *ngIf="!(usersLoading$ | async) && (usersErr$ | async)"
+        >
+            An Error has been occured on server.
+        </div>
+    </div>
+
+    <mat-table
+        #table
+        [dataSource]="dataSource"
+        class="example-table"
+    >
+
+        <!-- Avatar Column -->
+        <ng-container matColumnDef="avatar_url">
+            <mat-header-cell *matHeaderCellDef>Avatar</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <img
+                    style="width: 30px;height: 30px;border-radius: 50%;"
+                    [src]="row.avatar_url"
+                >
+            </mat-cell>
+        </ng-container>
+
+        <!-- id Column -->
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.id}}</mat-cell>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="login">
+            <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.login}}</mat-cell>
+        </ng-container>
+
+        <!-- Full Name Column -->
+        <ng-container matColumnDef="type">
+            <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.type}}</mat-cell>
+        </ng-container>
+
+        <!-- Expanded Content Column - The detail row is made up of this one column -->
+        <ng-container matColumnDef="expandedDetail">
+            <mat-cell *matCellDef="let detail">
+
+                <card-details [element]="detail.element"></card-details>
+
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row
+            *matRowDef="let row; columns: displayedColumns;"
+            matRipple
+            class="element-row"
+            [class.expanded]="expandedElement == row"
+            (click)="expandedElement = row;"
+        ></mat-row>
+        <mat-row
+            *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
+            [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'"
+            style="overflow: hidden"
+        >
+        </mat-row>
+    </mat-table>
+</div>
